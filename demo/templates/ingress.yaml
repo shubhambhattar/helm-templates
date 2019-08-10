@@ -1,0 +1,34 @@
+{{- if .Values.Ingress }}
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: {{ default (include "demo.name" .) .Values.Ingress.name }}
+  namespace: {{ .Release.namespace }}
+  {{- with .Values.Ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+{{ include "demo.labels" . | indent 4 }}
+
+{{- with .Values.Ingress }}
+spec:
+  
+  {{- with .backend }}
+  backend:
+    serviceName: {{ default nil .serviceName }}
+    servicePort: {{ default nil .servicePort }}
+  {{- end }}
+
+  {{- with .rules }}
+  rules: 
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  
+  {{- with .tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+{{- end }}
+{{- end }}

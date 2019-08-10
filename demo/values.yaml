@@ -1,0 +1,105 @@
+# Default values for demo.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+ConfigMap:
+  name: custom-config
+  data:
+    key1: value1
+    key2: value2
+  binaryData:
+    key3: base64_encoded_value
+
+
+PersistentVolumeClaim:
+  name: myclaim
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: slow
+  selector:
+    matchLabels: 
+      release: "stable"
+    matchExpressions: [
+      {
+        key: environment,
+        operator: In,
+        values: [
+          dev
+        ]
+      }
+    ]
+  dataSource:
+    name: new-snapshot-test
+    kind: VolumeSnapshot
+    apiGroup: snapshot.storage.k8s.io
+
+
+StorageClass:
+  name: standard
+  reclaimPolicy: Retain
+  provisioner: kubernetes.io/gce-pd
+  parameters:
+    type: pd-standard
+  volumeBindingMode: WaitForFirstConsumer
+  mountOptions: [
+    dir_mode=0777,
+    file_mode=0777,
+    uid=1000,
+    gid=1000
+  ]
+  allowedTopologies:
+  - matchLabelExpressions:
+    - key: failure-domain.beta.kubernetes.io/zone
+      values:
+      - us-central1-a
+      - us-central1-b
+
+Ingress:
+  name: name-virtual-host-ingress
+  rules:
+  - host: first.bar.com
+    http:
+      paths:
+      - backend:
+          serviceName: service1
+          servicePort: 80
+  - host: second.foo.com
+    http:
+      paths:
+      - backend:
+          serviceName: service2
+          servicePort: 80
+  - http:
+      paths:
+      - backend:
+          serviceName: service3
+          servicePort: 80
+  tls:
+  - hosts:
+    - sslexample.foo.com
+    secretName: testsecret-tls
+  
+Service:
+  name: my-service
+  annotations:
+    cloud.google.com/load-balancer-type: "Internal"
+  selector:
+    app: MyApp
+  clusterIP: 10.0.171.239
+  loadBalancerIP: 78.11.24.19
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 9376
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 9377
+  externalIPs:
+    - 80.11.12.10

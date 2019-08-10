@@ -1,0 +1,27 @@
+{{- if .Values.ConfigMap }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ default (include "demo.name" .) .Values.ConfigMap.name }}
+  namespace: {{ .Release.namespace }}
+  {{- with .Values.ConfigMap.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+{{ include "demo.labels" . | indent 4 }}
+
+{{- with .Values.ConfigMap }}
+
+{{- with .data }}
+data:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+
+{{- with .binaryData }}
+binaryData:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+
+{{- end }}
+{{- end }}

@@ -1,0 +1,35 @@
+{{- if .Values.StorageClass }}
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ default (include "demo.name" .) .Values.StorageClass.name }}
+  {{- with .Values.StorageClass.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+{{ include "demo.labels" . | indent 4 }}
+
+{{- with .Values.StorageClass }}
+reclaimPolicy: {{ .reclaimPolicy | default "Delete" | quote }}
+volumeBindingMode: {{ .volumeBindingMode | default "VolumeBindingImmediate" | quote }}
+provisioner: {{ default nil .provisioner | quote }}
+allowVolumeExpansion: {{ default nil .allowVolumeExpansion | quote }}
+
+{{- with .mountOptions }}
+mountOptions:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+
+{{- with .allowedTopologies }}
+allowedTopologies:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+
+{{- with .parameters }}
+parameters:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+
+{{- end }}
+{{- end }}

@@ -1,0 +1,41 @@
+{{- if .Values.PersistentVolumeClaim }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ default (include "demo.name" .) .Values.PersistentVolumeClaim.name }}
+  namespace: {{ .Release.namespace }}
+  {{- with .Values.PersistentVolumeClaim.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+{{ include "demo.labels" . | indent 4 }}
+
+{{- with .Values.PersistentVolumeClaim }}
+spec:
+  
+  {{- with .selector }}
+  selector:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  
+  storageClassName: {{ default nil .storageClassName | quote }}
+  volumeName: {{ default nil .volumeName | quote }}
+  volumeMode: {{ default nil .volumeMode | quote }}
+  
+  resources:
+    requests:
+      storage: {{ required "Storage size is required" .resources.requests.storage }}
+
+  {{- with .accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .dataSource }}
+  dataSource:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+{{- end }}
+{{- end }}
