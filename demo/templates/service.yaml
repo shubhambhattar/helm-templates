@@ -1,0 +1,79 @@
+{{- if .Values.Service }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ default (include "demo.name" .) .Values.Service.name }}
+  namespace: {{ .Release.namespace }}
+  
+  {{- with .Values.Service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+{{ include "demo.labels" . | indent 4 }}
+  {{- with .Values.Service.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+
+{{- $release_name := .Release.name }}
+{{- $app_name := default (include "demo.name" .) .Values.Service.name }}
+{{- $type := default "ClusterIP" .Values.Service.type }}
+
+{{- with .Values.Service }}
+spec:
+
+  {{- with .selector }}
+  selector:
+    app.kubernetes.io/name: {{ $app_name }}
+    app.kubernetes.io/instance: {{ $release_name }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+    
+  type: {{ $type | quote }}
+  publishNotReadyAddresses: {{ default false .publishNotReadyAddresses }}
+  sessionAffinity: {{ .sessionAffinity | default "None" | quote }}
+
+  {{- if (eq $type "ClusterIP") }}
+  clusterIP: {{ default nil .clusterIP | quote }}
+  
+  {{- else if (eq $type "ExternalName") }}
+  externalName: {{ required "externalName is required in type ExternalName" .externalName | quote }}
+
+  {{- else if (eq $type "NodePort") }}
+  clusterIP: {{ default nil .clusterIP | quote }}
+  externalTrafficPolicy: {{ .externalTrafficPolicy | default "Cluster" | quote }}
+
+  {{- else if (eq $type "LoadBalancer") }}
+  clusterIP: {{ default nil .clusterIP | quote }}
+  loadBalancerIP: {{ default nil .loadBalancerIP | quote }}
+  externalTrafficPolicy: {{ .externalTrafficPolicy | default "Cluster" | quote }}
+
+  {{- with .loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- if (.externalTrafficPolicy) and (eq .externalTrafficPolicy "Local") }}
+  healthCheckNodePort: {{ default nil .healthCheckNodePort | quote }}
+  {{- end }}
+
+  {{- end }}
+  
+  {{- with .ports }}
+  ports:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  
+  {{- with .externalIPs }}
+  externalIPs:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with .sessionAffinityConfig }}
+  sessionAffinityConfig:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+{{- end }}
+{{- end }}
