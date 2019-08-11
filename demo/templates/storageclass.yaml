@@ -9,6 +9,9 @@ metadata:
   {{- end }}
   labels:
 {{ include "demo.labels" . | indent 4 }}
+  {{- with .Values.StorageClass.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 
 {{- with .Values.StorageClass }}
 reclaimPolicy: {{ .reclaimPolicy | default "Delete" | quote }}
