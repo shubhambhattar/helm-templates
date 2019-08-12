@@ -1,20 +1,26 @@
 {{- if .Values.ConfigMap }}
+
+{{- $app_name := default (include "demo.name" .) .Values.ConfigMap.name }}
+{{- $release_namespace := .Release.namespace }}
+{{- $labels := include "demo.labels" . }}
+
+{{- with .Values.ConfigMap }}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ default (include "demo.name" .) .Values.ConfigMap.name }}
-  namespace: {{ .Release.namespace }}
-  {{- with .Values.ConfigMap.annotations }}
+  name: {{ $app_name }}
+  namespace: {{ $release_namespace }}
+  
+  {{- with .annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
-{{ include "demo.labels" . | indent 4 }}
-  {{- with .Values.ConfigMap.labels }}
+{{ $labels | indent 4 }}
+  {{- with .labels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
-
-{{- with .Values.ConfigMap }}
 
 {{- with .data }}
 data:

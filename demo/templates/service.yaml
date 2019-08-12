@@ -1,26 +1,31 @@
 {{- if .Values.Service }}
+
+{{- $app_name := default (include "demo.name" .) .Values.Service.name }}
+{{- $release_namespace := .Release.namespace }}
+{{- $release_name := .Release.name }}
+{{- $labels := include "demo.labels" . }}
+
+{{- $type := default "ClusterIP" .Values.Service.type }}
+
+{{- with .Values.Service }}
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ default (include "demo.name" .) .Values.Service.name }}
-  namespace: {{ .Release.namespace }}
+  name: {{ $app_name }}
+  namespace: {{ $release_namespace }}
   
-  {{- with .Values.Service.annotations }}
+  {{- with .annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
-{{ include "demo.labels" . | indent 4 }}
-  {{- with .Values.Service.labels }}
+{{ $labels | indent 4 }}
+  {{- with .labels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 
 
-{{- $release_name := .Release.name }}
-{{- $app_name := default (include "demo.name" .) .Values.Service.name }}
-{{- $type := default "ClusterIP" .Values.Service.type }}
-
-{{- with .Values.Service }}
 spec:
 
   {{- with .selector }}

@@ -1,20 +1,27 @@
 {{- if .Values.Ingress }}
+
+{{- $app_name := default (include "demo.name" .) .Values.Ingress.name }}
+{{- $release_namespace := .Release.namespace }}
+{{- $labels := include "demo.labels" . }}
+
+{{- with .Values.Ingress }}
+
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: {{ default (include "demo.name" .) .Values.Ingress.name }}
-  namespace: {{ .Release.namespace }}
-  {{- with .Values.Ingress.annotations }}
+  name: {{ $app_name }}
+  namespace: {{ $release_namespace }}
+
+  {{- with .annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
-{{ include "demo.labels" . | indent 4 }}
-  {{- with .Values.Ingress.labels }}
+{{ $labels | indent 4 }}
+  {{- with .labels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 
-{{- with .Values.Ingress }}
 spec:
   
   {{- with .backend }}

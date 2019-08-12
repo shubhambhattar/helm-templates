@@ -1,20 +1,27 @@
 {{- if .Values.PersistentVolumeClaim }}
+
+{{- $app_name := default (include "demo.name" .) .Values.PersistentVolumeClaim.name }}
+{{- $release_namespace := .Release.namespace }}
+{{- $labels := include "demo.labels" . }}
+
+{{- with .Values.PersistentVolumeClaim }}
+
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ default (include "demo.name" .) .Values.PersistentVolumeClaim.name }}
-  namespace: {{ .Release.namespace }}
-  {{- with .Values.PersistentVolumeClaim.annotations }}
+  name: {{ $app_name }}
+  namespace: {{ $release_namespace }}
+  
+  {{- with .annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
-{{ include "demo.labels" . | indent 4 }}
-  {{- with .Values.PersistentVolumeClaim.labels }}
+{{ $labels | indent 4 }}
+  {{- with .labels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 
-{{- with .Values.PersistentVolumeClaim }}
 spec:
   
   {{- with .selector }}
