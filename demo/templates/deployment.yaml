@@ -1,0 +1,253 @@
+{{- if .Values.Deployment }}
+
+{{- $app_name := default (include "demo.name" .) .Values.Deployment.name }}
+{{- $release_namespace := .Release.namespace }}
+{{- $release_name := .Release.name }}
+{{- $labels := include "demo.labels" . }}
+
+{{- with .Values.Deployment }}
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: {{ $app_name }}
+  namespace: {{ $release_namespace }}
+  
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+{{ $labels | indent 4 }}
+  {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+spec:
+  replicas: {{ required "No. of replicas are required" .replicas }}
+  minReadySeconds: {{ default nil .minReadySeconds | quote }}
+  progressDeadlineSeconds: {{ default nil .progressDeadlineSeconds | quote }}
+  paused: {{ default nil .paused | quote }}
+  revisionHistoryLimit: {{ default 10 .revisionHistoryLimit }}
+  
+  {{- with .strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ $app_name }}
+      app.kubernetes.io/instance: {{ $release_name }}
+      {{- with .labels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+  {{- with .template }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ $app_name }}
+        app.kubernetes.io/instance: {{ $release_name }}
+        {{- with .labels }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+
+    spec:
+      terminationGracePeriodSeconds: {{ default 30 .terminationGracePeriodSeconds }}
+      dnsPolicy: {{ .dnsPolicy | default "ClusterFirst" | quote }}
+      hostIPC: {{ default false .hostIPC }}
+      hostNetwork: {{ default false .hostNetwork }}
+      hostPID: {{ default false .hostPID }}
+      restartPolicy: {{ .restartPolicy | default "Always" | quote }}
+      shareProcessNamespace: {{ default false .shareProcessNamespace }}
+      activeDeadlineSeconds: {{ default nil .activeDeadlineSeconds | quote }}
+      subdomain: {{ default nil .subdomain | quote }}
+      schedulerName: {{ default nil .schedulerName | quote }}
+      hostname: {{ default nil .hostname | quote }}
+      nodeName: {{ default nil .nodeName | quote }}
+      serviceAccountName: {{ default nil .serviceAccountName | quote }}
+      automountServiceAccountToken: {{ default nil .automountServiceAccountToken | quote }}
+      priority: {{ default nil .priority | quote }}
+      priorityClassName: {{ default nil .priorityClassName | quote }}
+
+      {{- with .nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .securityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .hostAliases }}
+      hostAliases:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+      {{- with .initContainers }}
+      initContainers:
+      {{- range $initContainer := . }}
+      {{- with $initContainer }}
+        - name: {{ required "container name is required" .name | quote }}
+          image: "{{ required "container image is required" .image.repository }}:{{ required "container image tag is required" .image.tag }}"
+          imagePullPolicy: {{ .imagePullPolicy | default "Always" | quote }}
+          workingDir: {{ .workingDir | default "/" | quote }}
+
+          {{- with .command }}
+          command:
+          {{- range $value := . }}
+            - {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+
+          {{- with .args }}
+          args:
+          {{- range $value := . }}
+            - {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+          
+          {{- with .securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .ports }}
+          ports:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          resources:
+            requests:
+              cpu: {{ required "CPU requests are required" .resources.requests.cpu | quote }}
+              memory: {{ required "Memory requests are required" .resources.requests.memory | quote }}
+            limits:
+              cpu: {{ required "CPU requests are required" .resources.limits.cpu | quote }}
+              memory: {{ required "Memory requests are required" .resources.limits.memory | quote }}
+
+      {{- end }}
+      {{- end }}
+      {{- end }}
+
+      containers:
+      {{- range $container := .containers }}
+      {{- with $container }}
+        - name: {{ required "container name is required" .name | quote }}
+          image: "{{ required "container image is required" .image.repository }}:{{ required "container image tag is required" .image.tag }}"
+          imagePullPolicy: {{ .imagePullPolicy | default "Always" | quote }}
+          workingDir: {{ .workingDir | default "/" | quote }}
+
+          {{- with .command }}
+          command:
+          {{- range $value := . }}
+            - {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+
+          {{- with .args }}
+          args:
+          {{- range $value := . }}
+            - {{ $value | quote }}
+          {{- end }}
+          {{- end }}
+          
+          {{- with .securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .ports }}
+          ports:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .env }}
+          env:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          {{- with .readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+
+          resources:
+            requests:
+              cpu: {{ required "CPU requests are required" .resources.requests.cpu | quote }}
+              memory: {{ required "Memory requests are required" .resources.requests.memory | quote }}
+            limits:
+              cpu: {{ required "CPU requests are required" .resources.limits.cpu | quote }}
+              memory: {{ required "Memory requests are required" .resources.limits.memory | quote }}
+      {{- end }}
+      {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}
