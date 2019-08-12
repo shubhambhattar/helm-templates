@@ -118,7 +118,94 @@ Deployment:
         }
       }
     ]
+    initContainers: [
+      {
+        name: test-container,
+        image: {
+          repository: ubuntu,
+          tag: 18.04
+        },
+        imagePullPolicy: Always,
+        command: [
+          java,
+          -jar
+        ],
+        args: [
+          myjar.jar
+        ],
+        resources: {
+          requests: {
+            cpu: 100m,
+            memory: 100Mi
+          },
+          limits: {
+            cpu: 200m,
+            memory: 200Mi
+          }
+        }
+      }
+    ]
     containers: [
+      {
+        name: test-container,
+        image: {
+          repository: ubuntu,
+          tag: 18.04
+        },
+        imagePullPolicy: Always,
+        command: [
+          java,
+          -jar
+        ],
+        args: [
+          myjar.jar
+        ],
+        ports: [
+          {
+            name: http,
+            port: 80
+          },
+          {
+            name: health,
+            port: 8080
+          }
+        ],
+        env: [
+          {
+            name: test,
+            value: env
+          }
+        ],
+        envFrom: [
+          {
+            configMapRef: {
+              name: config
+            }
+          },
+          {
+            secretRef: {
+              name: secret-name
+            }
+          }
+        ],
+        volumeMounts: [
+          {
+            name: testPVC,
+            mountPath: /config/application.properties,
+            subPath: application.properties
+          }
+        ],
+        resources: {
+          requests: {
+            cpu: 100m,
+            memory: 100Mi
+          },
+          limits: {
+            cpu: 200m,
+            memory: 200Mi
+          }
+        }
+      },
       {
         name: test-container,
         image: {
