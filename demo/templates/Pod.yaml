@@ -1,0 +1,32 @@
+{{- if .Values.Pod }}
+
+{{- $app_name := default (include "demo.name" .) .Values.Pod.name }}
+{{- $release_namespace := .Release.namespace }}
+{{- $release_name := .Release.name }}
+{{- $labels := include "demo.labels" . }}
+
+{{- with .Values.Pod }}
+
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: {{ $app_name }}
+  namespace: {{ $release_namespace }}
+
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+{{ $labels | indent 4 }}
+  {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+{{- with .template }}
+spec:
+{{- include "pod" . | nindent 2 }}
+{{- end }}
+{{- end }}
+{{- end }}
