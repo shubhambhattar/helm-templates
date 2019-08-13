@@ -268,3 +268,37 @@ Deployment:
       }
     ]
       
+
+Job:
+  name: one-time-job
+  backoffLimit: 5
+  activeDeadlineSeconds: 100
+  template:
+    terminationGracePeriodSeconds: 60
+    containers: [
+      {
+        name: test-container,
+        image: {
+          repository: ubuntu,
+          tag: 18.04
+        },
+        imagePullPolicy: Always,
+        command: [
+          java,
+          -jar
+        ],
+        args: [
+          myjar.jar
+        ],
+        resources: {
+          requests: {
+            cpu: 100m,
+            memory: 100Mi
+          },
+          limits: {
+            cpu: 200m,
+            memory: 200Mi
+          }
+        }
+      }
+    ]
