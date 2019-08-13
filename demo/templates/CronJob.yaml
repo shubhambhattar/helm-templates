@@ -2,9 +2,11 @@
 
 {{- $app_name := default (include "demo.name" .) .Values.CronJob.name }}
 {{- $release_namespace := .Release.namespace }}
+{{- $release_name := .Release.name }}
 {{- $labels := include "demo.labels" . }}
 
 {{- with .Values.CronJob }}
+
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -28,24 +30,37 @@ spec:
   successfulJobsHistoryLimit: {{ default 3 .successfulJobsHistoryLimit }}
   suspend: {{ default false .suspend }}
   startingDeadlineSeconds: {{ default nil .startingDeadlineSeconds | quote }}
+
+  {{- with .jobTemplate }}
   jobTemplate:
     metadata:
       labels:
         app.kubernetes.io/name: {{ $app_name }}
-        app.kubernetes.io/instance: {{ $app_name }}
+        app.kubernetes.io/instance: {{ $release_name }}
+        {{- with .labels }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+    
     spec:
-      backoffLimit: {{ default 6 .jobTemplate.backoffLimit }}
-      activeDeadlineSeconds: {{ default nil .jobTemplate.activeDeadlineSeconds }}
-      completions: {{ default nil .jobTemplate.completions }}
-      manualSelector: {{ default nil .jobTemplate.manualSelector }}
-      parallelism: {{ default nil .jobTemplate.parallelism }}
+      backoffLimit: {{ default 6 .backoffLimit }}
+      activeDeadlineSeconds: {{ default nil .activeDeadlineSeconds | quote }}
+      completions: {{ default nil .completions | quote }}
+      manualSelector: {{ default nil .manualSelector | quote }}
+      parallelism: {{ default nil .parallelism | quote }}
+
+      {{- with .template }}
       template:
         metadata:
           labels:
             app.kubernetes.io/name: {{ $app_name }}
             app.kubernetes.io/instance: {{ $release_name }}
+            {{- with .labels }}
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
 
         spec:
-          {{- include "pod" . | nindent 6 }}
+          {{- include "pod" . | nindent 10 }}
+      {{- end }}
+  {{- end }}
 {{- end }}
 {{- end }}
