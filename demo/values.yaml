@@ -370,3 +370,52 @@ CronJob:
           }
         }
       ]
+
+StatefulSet:
+  name: web
+  serviceName: "nginx"
+  replicas: 14
+  template:
+    containers: [
+      {
+        name: nginx,
+        image: {
+          repository: k8s.gcr.io/nginx-slim,
+          tag: 0.8
+        },
+        ports: [
+          {
+            name: web,
+            containerPort: 80
+          }
+        ],
+        volumeMounts: [
+          {
+            name: www,
+            mountPath: /usr/share/nginx/html
+          }
+        ],
+        resources: {
+          requests: {
+            cpu: 100m,
+            memory: 100Mi
+          },
+          limits: {
+            cpu: 200m,
+            memory: 200Mi
+          }
+        }
+      }
+    ]
+    volumeClaimTemplates: [
+      {
+        name: www,
+        storageClassName: thin-disk,
+        accessModes: [ "ReadWriteOnce" ],
+        resources: {
+          requests: {
+            storage: 1Gi
+          }
+        }
+      }
+    ]
