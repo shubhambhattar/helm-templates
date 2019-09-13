@@ -28,11 +28,13 @@ metadata:
 
 spec:
 
-  {{- with .selector }}
+  {{- if (eq $type "ClusterIP") or (eq $type "NodePort") or (eq $type "LoadBalancer") }}
   selector:
     app.kubernetes.io/name: {{ $app_name }}
     app.kubernetes.io/instance: {{ $release_name }}
+    {{- with .selector }}
     {{- toYaml . | nindent 4 }}
+    {{- end }}
   {{- end }}
     
   type: {{ $type | quote }}
