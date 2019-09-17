@@ -28,7 +28,7 @@ metadata:
 
 spec:
 
-  {{- if or (and (eq $type "ClusterIP") (ne .clusterIP "None")) (eq $type "NodePort") (eq $type "LoadBalancer") }}
+  {{- if or (eq $type "ClusterIP") (eq $type "NodePort") (eq $type "LoadBalancer") }}
   selector:
     app.kubernetes.io/name: {{ $app_name }}
     app.kubernetes.io/instance: {{ $release_name }}
