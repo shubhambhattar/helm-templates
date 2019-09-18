@@ -23,37 +23,37 @@
   
   {{- with .securityContext }}
   securityContext:
-    {{- toYaml . | nindent 6 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 
   {{- with .ports }}
   ports:
-    {{- toYaml . | nindent 6 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 
   {{- with .env }}
   env:
-    {{- toYaml . | nindent 6 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 
   {{- with .envFrom }}
   envFrom:
-    {{- toYaml . | nindent 6 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 
   {{- with .volumeMounts }}
   volumeMounts:
-    {{- toYaml . | nindent 6 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 
   {{- with .livenessProbe }}
   livenessProbe:
-    {{- toYaml . | nindent 6 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 
   {{- with .readinessProbe }}
   readinessProbe:
-    {{- toYaml . | nindent 6 }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 
   resources:
