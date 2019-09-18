@@ -6,7 +6,7 @@
     name: {{ required "volumeClaim name is required" .name | quote }}
     {{- with .annotations }}
     annotations:
-      {{- toYaml . | nindent 4 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
   spec:
     storageClassName: {{ default nil .storageClassName | quote }}
@@ -19,12 +19,12 @@
 
     {{- with .accessModes }}
     accessModes:
-      {{- toYaml . | nindent 4 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
 
     {{- with .dataSource }}
     dataSource:
-      {{- toYaml . | nindent 4 }}
+      {{- toYaml . | nindent 6 }}
     {{- end }}
 
 {{- end }}
