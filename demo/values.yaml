@@ -419,3 +419,16 @@ StatefulSet:
         }
       }
     ]
+ 
+Endpoints:
+  name: test
+  subsets: [
+    {
+      addresses: [
+          ip: 192.0.2.42
+      ],
+      ports: [
+          port: 9376
+      ]
+    }
+  ]
