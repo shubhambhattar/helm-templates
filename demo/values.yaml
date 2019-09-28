@@ -432,3 +432,13 @@ Endpoints:
       ]
     }
   ]
+  
+Secret:
+  name: test
+  type: Opaque
+  data:
+    KEY_1: b
+    KEY_2: d
+    app.properties: |
+      a=b
+      c=d
