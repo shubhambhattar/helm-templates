@@ -1,9 +1,9 @@
 {{- if .Values.DaemonSet }}
 
-{{- $app_name := default (include "base.name" .) .Values.DaemonSet.name }}
+{{- $app_name := default (include "demo.name" .) .Values.DaemonSet.name }}
 {{- $release_namespace := .Release.namespace }}
 {{- $release_name := .Release.name }}
-{{- $labels := include "base.labels" . }}
+{{- $labels := include "demo.labels" . }}
 
 {{- with .Values.DaemonSet }}
 
