@@ -1,0 +1,59 @@
+{{- if .Values.DaemonSet }}
+
+{{- $app_name := default (include "base.name" .) .Values.DaemonSet.name }}
+{{- $release_namespace := .Release.namespace }}
+{{- $release_name := .Release.name }}
+{{- $labels := include "base.labels" . }}
+
+{{- with .Values.DaemonSet }}
+
+apiVersion: apps/v1
+kind: DaemonSet
+
+metadata:
+  name: {{ $app_name }}
+  namespace: {{ $release_namespace }}
+  
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+{{ $labels | indent 4 }}
+  {{- with .labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+spec:
+  minReadySeconds: {{ default 0 .minReadySeconds }}
+  revisionHistoryLimit: {{ default 10 .revisionHistoryLimit }}
+  
+  {{- with .updateStrategy }}
+  updateStrategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ $app_name }}
+      app.kubernetes.io/instance: {{ $release_name }}
+      {{- with .labels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+  {{- with .template }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ $app_name }}
+        app.kubernetes.io/instance: {{ $release_name }}
+        {{- with .labels }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+
+    spec:
+    {{- include "pod" . | nindent 6 }}
+            
+  {{- end }}
+{{- end }}
+{{- end }}
