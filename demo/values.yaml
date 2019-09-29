@@ -442,3 +442,39 @@ Secret:
     app.properties: |
       a=b
       c=d
+
+DaemonSet:
+  name: test
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 10%
+  template:
+    terminationGracePeriodSeconds: 60
+    containers: [
+      {
+        name: test-container,
+        image: {
+          repository: ubuntu,
+          tag: 18.04
+        },
+        imagePullPolicy: Always,
+        command: [
+          java,
+          -jar
+        ],
+        args: [
+          myjar.jar
+        ],
+        resources: {
+          requests: {
+            cpu: 100m,
+            memory: 100Mi
+          },
+          limits: {
+            cpu: 200m,
+            memory: 200Mi
+          }
+        }
+      }
+    ]
