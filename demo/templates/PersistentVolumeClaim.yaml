@@ -3,15 +3,13 @@
 {{- $release_namespace := .Release.namespace }}
 {{- $labels := include "demo.labels" . }}
 
-{{- $app_name := include "demo.name" . }}
-
 {{- range $pvc := .Values.PersistentVolumeClaim }}
 {{- with $pvc }}
 
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ $app_name }}
+  name: {{ .name }}
   namespace: {{ $release_namespace }}
   
   {{- with .annotations }}
