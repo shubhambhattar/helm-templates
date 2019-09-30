@@ -1,14 +1,14 @@
 {{- if .Values.StorageClass }}
 
-{{- $app_name := default (include "demo.name" .) .Values.StorageClass.name }}
 {{- $labels := include "demo.labels" . }}
 
-{{- with .Values.StorageClass }}
+{{- range $storageClass := .Values.StorageClass }}
+{{- with $storageClass }}
 
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: {{ $app_name }}
+  name: {{ .name }}
   
   {{- with .annotations }}
   annotations:
@@ -39,6 +39,7 @@ allowedTopologies:
 parameters:
   {{- toYaml . | nindent 2 }}
 {{- end }}
-
+---
+{{- end }}
 {{- end }}
 {{- end }}

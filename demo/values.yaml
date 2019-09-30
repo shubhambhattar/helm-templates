@@ -47,25 +47,37 @@ PersistentVolumeClaim: [
 ]
 
 
-StorageClass:
-  name: standard
-  reclaimPolicy: Retain
-  provisioner: kubernetes.io/gce-pd
-  parameters:
-    type: pd-standard
-  volumeBindingMode: WaitForFirstConsumer
-  mountOptions: [
-    dir_mode=0777,
-    file_mode=0777,
-    uid=1000,
-    gid=1000
-  ]
-  allowedTopologies:
-  - matchLabelExpressions:
-    - key: failure-domain.beta.kubernetes.io/zone
-      values:
-      - us-central1-a
-      - us-central1-b
+StorageClass: [
+  {
+    name: standard,
+    reclaimPolicy: Retain,
+    provisioner: kubernetes.io/gce-pd,
+    parameters: {
+      type: pd-standard
+    },
+    volumeBindingMode: WaitForFirstConsumer,
+    mountOptions: [
+      dir_mode=0777,
+      file_mode=0777,
+      uid=1000,
+      gid=1000
+    ],
+    allowedTopologies: [
+      {
+        matchLabelExpressions: [
+          {
+            key: failure-domain.beta.kubernetes.io/zone,
+            values: [
+              us-central1-a,
+              us-central1-b
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
+  
 
 Ingress:
   name: name-virtual-host-ingress
