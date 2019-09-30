@@ -1,10 +1,12 @@
 {{- if .Values.PersistentVolumeClaim }}
 
-{{- $app_name := default (include "demo.name" .) .Values.PersistentVolumeClaim.name }}
 {{- $release_namespace := .Release.namespace }}
 {{- $labels := include "demo.labels" . }}
 
-{{- with .Values.PersistentVolumeClaim }}
+{{- $app_name := include "demo.name" . }}
+
+{{- range $pvc := .Values.PersistentVolumeClaim }}
+{{- with $pvc }}
 
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -46,6 +48,7 @@ spec:
   dataSource:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-
+---
+{{- end }}
 {{- end }}
 {{- end }}

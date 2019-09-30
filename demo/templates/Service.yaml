@@ -1,18 +1,20 @@
 {{- if .Values.Service }}
 
-{{- $app_name := default (include "demo.name" .) .Values.Service.name }}
 {{- $release_namespace := .Release.namespace }}
 {{- $release_name := .Release.name }}
 {{- $labels := include "demo.labels" . }}
 
-{{- $type := default "ClusterIP" .Values.Service.type }}
+{{- $app_name := include "demo.name" . }}
 
-{{- with .Values.Service }}
+{{- range $service := .Values.Service }}
+{{- with $service }}
+
+{{- $type := default "ClusterIP" .type }}
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ $app_name }}
+  name: {{ .name }}
   namespace: {{ $release_namespace }}
   
   {{- with .annotations }}
@@ -81,6 +83,7 @@ spec:
   sessionAffinityConfig:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-
+---
+{{- end }}
 {{- end }}
 {{- end }}

@@ -11,31 +11,40 @@ ConfigMap:
     key3: base64_encoded_value
 
 
-PersistentVolumeClaim:
-  name: myclaim
-  accessModes:
-    - ReadWriteOnce
-  volumeMode: Filesystem
-  resources:
-    requests:
-      storage: 8Gi
-  storageClassName: slow
-  selector:
-    matchLabels: 
-      release: "stable"
-    matchExpressions: [
-      {
-        key: environment,
-        operator: In,
-        values: [
-          dev
-        ]
+PersistentVolumeClaim: [
+  {
+    name: myclaim,
+    accessModes: [
+      ReadWriteOnce
+    ],
+    volumeMode: Filesystem,
+    resources: {
+      requests: {
+        storage: 8Gi
       }
-    ]
-  dataSource:
-    name: new-snapshot-test
-    kind: VolumeSnapshot
-    apiGroup: snapshot.storage.k8s.io
+    },   
+    storageClassName: slow,
+    selector: {
+      matchLabels: {
+        release: "stable"
+      },
+      matchExpressions: [
+        {
+          key: environment,
+          operator: In,
+          values: [
+            dev
+          ]
+        }
+      ]
+    },
+    dataSource: {
+      name: new-snapshot-test,
+      kind: VolumeSnapshot,
+      apiGroup: snapshot.storage.k8s.io
+    }
+  }
+]
 
 
 StorageClass:
@@ -83,26 +92,50 @@ Ingress:
     - sslexample.foo.com
     secretName: testsecret-tls
   
-Service:
-  name: my-service
-  annotations:
-    cloud.google.com/load-balancer-type: "Internal"
-  selector:
-    app: MyApp
-  clusterIP: 10.0.171.239
-  loadBalancerIP: 78.11.24.19
-  type: LoadBalancer
-  ports:
-    - name: http
-      protocol: TCP
-      port: 80
-      targetPort: 9376
-    - name: https
-      protocol: TCP
-      port: 443
-      targetPort: 9377
-  externalIPs:
-    - 80.11.12.10
+Service: [
+  {
+    name: my-service,
+    annotations: {
+      cloud.google.com/load-balancer-type: "Internal"
+    },
+    selector: {
+      app: MyApp
+    },
+    clusterIP: 10.0.171.239,
+    loadBalancerIP: 78.11.24.19,
+    type: LoadBalancer,
+    ports: [
+      {
+        name: http,
+        protocol: TCP,
+        port: 80,
+        targetPort: 9376
+      },
+      {
+        name: https,
+        protocol: TCP,
+        port: 443,
+        targetPort: 9377
+      }
+    ],
+    externalIPs: [
+      80.11.12.10
+    ]
+  },
+  {
+    name: my-service-b,
+    type: ClusterIP,
+    ports: [
+      {
+        name: http,
+        protocol: TCP,
+        port: 80,
+        targetPort: 8080
+      }
+    ]
+  }
+]
+  
 
 
 Deployment:
