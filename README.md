@@ -1,5 +1,5 @@
 ## Background
-This repository aims to provide you with Kubernetes Resource templates that you can use in you chart with minimal changes. 
+This repository aims to provide you with Kubernetes resource templates that you can use in your chart with minimal changes. 
 
 # How this project helps?
 To create a new skeleton chart, run the following command (which will provide you with a basic structured chart):
@@ -8,7 +8,7 @@ To create a new skeleton chart, run the following command (which will provide yo
     
 Inside the `templates/` directory of the my-chart is where all the Kubernetes Resource related templates (YAML files) go. You can copy paste the required Resource YMAL files from this repository's `demo/templates/` to `my-chart/templates/`.
 
-> Note that while copy pasting the templates, the indentation should be preserved. I've done this in VS Code and it preserves the indentation. Messing with the indentation of templates might result in errors while trying to install the chart.
+> Note that while copy-pasting the templates, the indentation should be preserved. I've done this in VS Code and it preserves the indentation. Messing with the indentation of templates might result in errors while trying to install the chart.
 
 However, there are a few helper scripts that are common to multiple Kubernetes Resources. For ex, Deployment, Replica Set, CronJob and Job all the creates a Pod at runtime so instead of having the Pod spec in the YAML for all of these resources, I've created a `_pod.tpl` helper script that can be *injected* in these. This is also helpful, if at some later Kubernetes version, the spec for Pod changes because then we'll only need to change it in one tpl file (`_pod.tpl`) instead of multiple YAMl files - `Deployment.yaml`, `CronJob.yaml`, etc. 
 
