@@ -6,7 +6,7 @@ To create a new skeleton chart, run the following command (which will provide yo
 
     helm create my-chart                             # helm create <chart-name>
     
-Inside the `templates/` directory of the my-chart is where all the Kubernetes Resource related templates (YAML files) go. You can copy paste the required Resource YMAL files from this repository's `demo/templates/` to `my-chart/templates/`.
+Inside the `templates/` directory of the 'my-chart' is where all the Kubernetes Resource related templates (YAML files) go. You can copy paste the required Resource YAML files from the repository `demo/templates/` to `my-chart/templates/`.
 
 > Note that while copy pasting the templates, the indentation should be preserved. I've done this in VS Code and it preserves the indentation. Messing with the indentation of templates might result in errors while trying to install the chart.
 
