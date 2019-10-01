@@ -1,17 +1,16 @@
 {{- if .Values.Endpoints }}
 
-{{- $app_name := default (include "demo.name" .) .Values.Endpoints.name }}
 {{- $release_namespace := .Release.namespace }}
-{{- $release_name := .Release.name }}
 {{- $labels := include "demo.labels" . }}
 
-{{- with .Values.Endpoints }}
+{{- range $endpoints := .Values.Endpoints }}
+{{- with $endpoints }}
 
 apiVersion: v1
 kind: Endpoints
 
 metadata:
-  name: {{ $app_name }}
+  name: {{ .name }}
   namespace: {{ $release_namespace }}
   
   {{- with .annotations }}
@@ -28,6 +27,7 @@ metadata:
 subsets:
   {{- toYaml . | nindent 2 }}
 {{- end }}
-
+---
+{{- end }}
 {{- end }}
 {{- end }}
