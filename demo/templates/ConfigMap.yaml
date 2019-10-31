@@ -1,15 +1,14 @@
 {{- if .Values.ConfigMap }}
 
-{{- $app_name := default (include "demo.name" .) .Values.ConfigMap.name }}
 {{- $release_namespace := .Release.namespace }}
-{{- $labels := include "demo.labels" . }}
+{{- $labels := include "base.labels" . }}
 
 {{- with .Values.ConfigMap }}
 
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ $app_name }}
+  name: {{ .name }}
   namespace: {{ $release_namespace }}
   
   {{- with .annotations }}

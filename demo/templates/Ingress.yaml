@@ -1,15 +1,14 @@
 {{- if .Values.Ingress }}
 
-{{- $app_name := default (include "demo.name" .) .Values.Ingress.name }}
 {{- $release_namespace := .Release.namespace }}
-{{- $labels := include "demo.labels" . }}
+{{- $labels := include "base.labels" . }}
 
 {{- with .Values.Ingress }}
 
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ $app_name }}
+  name: {{ .name }}
   namespace: {{ $release_namespace }}
 
   {{- with .annotations }}
@@ -23,7 +22,6 @@ metadata:
   {{- end }}
 
 spec:
-  
   {{- with .backend }}
   backend:
     serviceName: {{ default nil .serviceName }}

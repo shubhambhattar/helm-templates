@@ -1,10 +1,7 @@
 {{- if .Values.Service }}
 
 {{- $release_namespace := .Release.namespace }}
-{{- $release_name := .Release.name }}
-{{- $labels := include "demo.labels" . }}
-
-{{- $app_name := include "demo.name" . }}
+{{- $labels := include "base.labels" . }}
 
 {{- range $service := .Values.Service }}
 {{- with $service }}
@@ -27,18 +24,14 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 
-
 spec:
-
   {{- if or (eq $type "ClusterIP") (eq $type "NodePort") (eq $type "LoadBalancer") }}
   selector:
-    app.kubernetes.io/name: {{ $app_name }}
-    app.kubernetes.io/instance: {{ $release_name }}
+{{ $labels | indent 4 }}
     {{- with .selector }}
-    {{- toYaml . | nindent 4 }}
+      {{- toYaml . | nindent 4 }}
     {{- end }}
   {{- end }}
-    
   type: {{ $type | quote }}
   publishNotReadyAddresses: {{ default false .publishNotReadyAddresses }}
   sessionAffinity: {{ .sessionAffinity | default "None" | quote }}

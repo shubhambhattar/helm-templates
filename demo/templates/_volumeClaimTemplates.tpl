@@ -9,23 +9,7 @@
       {{- toYaml . | nindent 6 }}
     {{- end }}
   spec:
-    storageClassName: {{ default nil .storageClassName | quote }}
-    volumeName: {{ default nil .volumeName | quote }}
-    volumeMode: {{ default nil .volumeMode | quote }}
-  
-    resources:
-      requests:
-        storage: {{ required "Storage size is required" .resources.requests.storage }}
-
-    {{- with .accessModes }}
-    accessModes:
-      {{- toYaml . | nindent 6 }}
-    {{- end }}
-
-    {{- with .dataSource }}
-    dataSource:
-      {{- toYaml . | nindent 6 }}
-    {{- end }}
+    {{- include "persistentVolumeClaimSpec" . | nindent 4 }}
 
 {{- end }}
 {{- end }}
