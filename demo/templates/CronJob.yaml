@@ -1,16 +1,14 @@
 {{- if .Values.CronJob }}
 
-{{- $app_name := default (include "demo.name" .) .Values.CronJob.name }}
 {{- $release_namespace := .Release.namespace }}
-{{- $release_name := .Release.name }}
-{{- $labels := include "demo.labels" . }}
+{{- $labels := include "base.labels" . }}
 
 {{- with .Values.CronJob }}
 
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: {{ $app_name }}
+  name: {{ .name }}
   namespace: {{ $release_namespace }}
 
   {{- with .annotations }}
@@ -35,10 +33,9 @@ spec:
   jobTemplate:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ $app_name }}
-        app.kubernetes.io/instance: {{ $release_name }}
+{{ $labels | indent 8 }}
         {{- with .labels }}
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
     
     spec:
@@ -52,10 +49,9 @@ spec:
       template:
         metadata:
           labels:
-            app.kubernetes.io/name: {{ $app_name }}
-            app.kubernetes.io/instance: {{ $release_name }}
+{{ $labels | indent 12 }}
             {{- with .labels }}
-              {{- toYaml . | nindent 14 }}
+              {{- toYaml . | nindent 12 }}
             {{- end }}
 
         spec:

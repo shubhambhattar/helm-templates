@@ -55,7 +55,6 @@
   readinessProbe:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-
   resources:
     requests:
       cpu: {{ required "CPU requests are required" .resources.requests.cpu | quote }}

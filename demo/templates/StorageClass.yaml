@@ -1,6 +1,6 @@
 {{- if .Values.StorageClass }}
 
-{{- $labels := include "demo.labels" . }}
+{{- $labels := include "base.labels" . }}
 
 {{- range $storageClass := .Values.StorageClass }}
 {{- with $storageClass }}

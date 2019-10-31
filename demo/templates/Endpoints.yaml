@@ -1,14 +1,13 @@
 {{- if .Values.Endpoints }}
 
 {{- $release_namespace := .Release.namespace }}
-{{- $labels := include "demo.labels" . }}
+{{- $labels := include "base.labels" . }}
 
 {{- range $endpoints := .Values.Endpoints }}
 {{- with $endpoints }}
 
 apiVersion: v1
 kind: Endpoints
-
 metadata:
   name: {{ .name }}
   namespace: {{ $release_namespace }}

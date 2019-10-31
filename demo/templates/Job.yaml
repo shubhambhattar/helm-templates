@@ -1,17 +1,14 @@
 {{- if .Values.Job }}
 
-{{- $app_name := default (include "demo.name" .) .Values.Job.name }}
 {{- $release_namespace := .Release.namespace }}
-{{- $release_name := .Release.name }}
-{{- $labels := include "demo.labels" . }}
+{{- $labels := include "base.labels" . }}
 
 {{- with .Values.Job }}
 
 apiVersion: batch/v1
 kind: Job
-
 metadata:
-  name: {{ $app_name }}
+  name: {{ .name }}
   namespace: {{ $release_namespace }}
 
   {{- with .annotations }}
@@ -36,10 +33,9 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ $app_name }}
-        app.kubernetes.io/instance: {{ $release_name }}
+{{ $labels | indent 8 }}
         {{- with .labels }}
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
 
     spec:
@@ -47,4 +43,3 @@ spec:
   {{- end }}
 {{- end }}
 {{- end }}
-

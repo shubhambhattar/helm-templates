@@ -1,17 +1,15 @@
 {{- if .Values.Deployment }}
 
-{{- $app_name := default (include "demo.name" .) .Values.Deployment.name }}
-{{- $release_namespace := .Release.namespace }}
-{{- $release_name := .Release.name }}
-{{- $labels := include "demo.labels" . }}
+{{- $release_namespace := .Release.Namespace }}
+{{- $release_name := .Release.Name }}
+{{- $labels := include "base.labels" . }}
 
 {{- with .Values.Deployment }}
 
 apiVersion: apps/v1
 kind: Deployment
-
 metadata:
-  name: {{ $app_name }}
+  name: {{ $release_name }}-{{ required ".Deployment.name is required" .name }}
   namespace: {{ $release_namespace }}
   
   {{- with .annotations }}
@@ -38,20 +36,18 @@ spec:
 
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ $app_name }}
-      app.kubernetes.io/instance: {{ $release_name }}
+{{ $labels | indent 6 }}
       {{- with .labels }}
-        {{- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 6 }}
       {{- end }}
 
   {{- with .template }}
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ $app_name }}
-        app.kubernetes.io/instance: {{ $release_name }}
+{{ $labels | indent 8 }}
         {{- with .labels }}
-          {{- toYaml . | nindent 10 }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
 
     spec:
