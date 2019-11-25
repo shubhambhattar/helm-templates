@@ -97,7 +97,7 @@ If you're installing a chart for the first time, you can run the following comma
 
 For `helm3`:
 
-    helm3 install --namespace <namespace> <release-name> <path/to/chart>
+    helm install --namespace <namespace> <release-name> <path/to/chart>
 
 > **Chart is installed only once**, and for any new changes the chart is either 
 upgraded/rollback(d). If you run `helm install` of the chart multiple times, 
