@@ -129,6 +129,7 @@ the column `NAME`. This is your release name.
 ​
 **For ex**: If you want to upgrade the chart for click, run the command:
 ​
+
     helm list --namespace <namespace> | grep click
 ​
 The correct chart name in the output is `click-0.1.0` and hence the 
@@ -143,9 +144,15 @@ For `helm3`:
 
     helm upgrade --namespace <namespace> <release-name> <path/to/updated/chart>
 ​
-> If you simply ugrade a ConfigMap in chart's `values.yaml` file, the pod 
-won't be restarted by itself. The general idea is only those Kubernetes 
-Resources are restarted which actually changed in `values.yaml` file.
+> Use `env` section in Deployment spec to store environment variables 
+for a Deployment. And for configuration files (to be mounted at runtime), 
+store them in `config/` directory at the chart's root directory. 
+If you simply ugrade the configuration in `configs/` directory,
+it's checksum is now used as a field in Deployment. Hence, 
+even though Deployment spec itself hasn't changed, the checksum computed 
+for files in `config/` will change which will trigger a restart of 
+all the pods in the Deployment. The general idea is only those Kubernetes 
+Resources are restarted whose spec have actually changed. 
 ​
 ## Rolling back changes (Degrading to a previous version of the chart)
 ​
