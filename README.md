@@ -7,9 +7,9 @@ The `demo`
  directory has templates for many common Kubernetes resource. 
 To generate a new chart, run the following command with `charts` as base directory:
 ​
-```
-helm create <chart-name>
-```
+
+    helm create <chart-name>
+
 > It's best to have Chart name same as Component name.
 ​
 This will generate a skeleton for chart. Identify what Kubernetes resources your 
@@ -20,6 +20,11 @@ directory. The templates in
 directory are designed to be generic and should serve all the use cases. In this 
 way, we can have same templates in every chart across the org.
 ​
+
+**Delete everything under `<chart-name>/templates/` except `_helpers.tpl` file.**
+**If you wish, you can add your own `NOTES.txt` as the default one won't work**
+**(because we using custom templates).**
+
 It's important to understand which templates are to be included while creating a 
 chart. One Kubernetes Resource can create another Resource. 
 ​
@@ -69,22 +74,16 @@ After the changes are done in `values.yaml` file, it's time to see how the final
 are rendered and if there are any errors. We can check how helm renders the files
 by running the command:
 ​
-```
-helm template <chart-name/>
-```
+    helm template <chart-name/>
 ​
 This will only report rendering errors not any syntactical errors. This doesn't validate 
 the chart. To check those, run the command:
 ​
-```
-helm lint <chart-name/>
-```
+    helm lint <chart-name/>
 ​
 There is another command which does a strict checking on the chart:
 ​
-```
-helm install --debug --dry-run <path/to/chart-name/>
-```
+    helm install --debug --dry-run <path/to/chart-name/>
 ​
 This command simulates an install by connecting to Tiller running on the server but doesn't 
 actually install anything.
@@ -93,9 +92,13 @@ actually install anything.
 ​
 If you're installing a chart for the first time, you can run the following command:
 ​
-```
-helm install --namespace <namespace> <path/to/chart/>
-```
+
+    helm install --namespace <namespace> <path/to/chart/>
+
+For `helm3`:
+
+    helm3 install --namespace <namespace> <release-name> <path/to/chart>
+
 > **Chart is installed only once**, and for any new changes the chart is either 
 upgraded/rollback(d). If you run `helm install` of the chart multiple times, 
 multiple instances will be installed which you probably don't want. **TL;DR**: Don't 
@@ -107,9 +110,9 @@ If the chart has been installed and you just want to upgrade it, you'll first ha
 release name of the installed chart. Suppose your application old chart name is `click`, then
 run the following command:
 ​
-```
-helm list --namespace <namespace> | grep <old-chart-name>
-```
+
+    helm list --namespace <namespace> | grep <old-chart-name>
+
 ​
 This should bring the output as follows:
 ​
@@ -126,18 +129,19 @@ the column `NAME`. This is your release name.
 ​
 **For ex**: If you want to upgrade the chart for click, run the command:
 ​
-```
-helm list --namespace <namespace> | grep click
-```
+    helm list --namespace <namespace> | grep click
 ​
 The correct chart name in the output is `click-0.1.0` and hence the 
 release name will be `hissing-bear`.
 ​
 Once we have the release name, we can upgrade using the following command:
 ​
-```
-helm upgrade <release-name> <path/to/updated/chart/>
-```
+
+    helm upgrade <release-name> <path/to/updated/chart/>
+
+For `helm3`:
+
+    helm upgrade --namespace <namespace> <release-name> <path/to/updated/chart>
 ​
 > If you simply ugrade a ConfigMap in chart's `values.yaml` file, the pod 
 won't be restarted by itself. The general idea is only those Kubernetes 
@@ -151,17 +155,18 @@ happens, the REVISION count increases by 1.
 ​
 If you know what revision you have to rollback to, issue the command:
 ​
-```
-helm rollback <release-name> <revision-no>
-```
+    helm rollback <release-name> <revision-no>
 ​
 ## Deleting a chart
 ​
 If you want to delete a chart, get the release name of the chart and run the following:
 ​
-```
-helm delete --purge <release-name>
-```
+
+    helm delete --purge <release-name>
+
+For `helm3`:
+
+    helm uninstall --namespace <namespace> <release-name>
 ​
 It's possible in some cases and running the delete command won't delete the PVCs 
 created. The idea is since PVCs can have shared data that can be used across 
