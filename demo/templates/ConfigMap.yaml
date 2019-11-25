@@ -2,6 +2,7 @@
 
 {{- $release_namespace := .Release.namespace }}
 {{- $labels := include "base.labels" . }}
+{{- $configFiles := (.Files.Glob "config/*").AsConfig }}
 
 {{- with .Values.ConfigMap }}
 
@@ -21,10 +22,11 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 
-{{- with .data }}
 data:
+  {{- $configFiles | nindent 2 }}
+  {{- with .data }}
   {{- toYaml . | nindent 2 }}
-{{- end }}
+  {{- end }}
 
 {{- with .binaryData }}
 binaryData:

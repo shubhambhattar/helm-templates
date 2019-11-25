@@ -3,6 +3,7 @@
 {{- $release_namespace := .Release.Namespace }}
 {{- $release_name := .Release.Name }}
 {{- $labels := include "base.labels" . }}
+{{- $configFiles := (.Files.Glob "config/*").AsConfig }}
 
 {{- with .Values.Deployment }}
 
@@ -53,6 +54,8 @@ spec:
   {{- with .template }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ print $configFiles | sha256sum }}
       labels:
 {{ $labels | indent 8 }}
         {{- with .labels }}
