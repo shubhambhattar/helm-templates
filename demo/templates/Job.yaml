@@ -23,11 +23,26 @@ metadata:
 
 spec:
   backoffLimit: {{ default 6 .backoffLimit }}
-  activeDeadlineSeconds: {{ default nil .activeDeadlineSeconds | quote }}
-  completions: {{ default nil .completions | quote }}
-  manualSelector: {{ default nil .manualSelector | quote }}
-  parallelism: {{ default nil .parallelism | quote }}
-  ttlSecondsAfterFinished: {{ default nil .ttlSecondsAfterFinished | quote }}
+
+  {{- if .activeDeadlineSeconds }}
+  activeDeadlineSeconds: {{ .activeDeadlineSeconds | quote }}
+  {{- end }}
+
+  {{- if .completions }}
+  completions: {{ .completions | quote }}
+  {{- end }}
+
+  {{- if .manualSelector }}
+  manualSelector: {{ .manualSelector | quote }}
+  {{- end }}
+
+  {{- if .parallelism }}
+  parallelism: {{ .parallelism | quote }}
+  {{- end }}
+
+  {{- if .ttlSecondsAfterFinished }}
+  ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished | quote }}
+  {{- end }}
 
   {{- with .template }}
   template:

@@ -22,8 +22,13 @@ metadata:
 
 reclaimPolicy: {{ .reclaimPolicy | default "Delete" | quote }}
 volumeBindingMode: {{ .volumeBindingMode | default "VolumeBindingImmediate" | quote }}
-provisioner: {{ default nil .provisioner | quote }}
-allowVolumeExpansion: {{ default nil .allowVolumeExpansion | quote }}
+{{- if .provisioner }}
+provisioner: {{ .provisioner | quote }}
+{{- end }}
+
+{{- if .allowVolumeExpansion }}
+allowVolumeExpansion: {{ .allowVolumeExpansion | quote }}
+{{- end }}
 
 {{- with .mountOptions }}
 mountOptions:

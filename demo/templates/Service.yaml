@@ -37,18 +37,27 @@ spec:
   sessionAffinity: {{ .sessionAffinity | default "None" | quote }}
 
   {{- if (eq $type "ClusterIP") }}
-  clusterIP: {{ default nil .clusterIP | quote }}
+  {{- if .clusterIP }}
+  clusterIP: {{ .clusterIP | quote }}
+  {{- end }}
   
   {{- else if (eq $type "ExternalName") }}
   externalName: {{ required "externalName is required in type ExternalName" .externalName | quote }}
 
   {{- else if (eq $type "NodePort") }}
-  clusterIP: {{ default nil .clusterIP | quote }}
+  {{- if .clusterIP }}
+  clusterIP: {{ .clusterIP | quote }}
+  {{- end }}
   externalTrafficPolicy: {{ .externalTrafficPolicy | default "Cluster" | quote }}
 
   {{- else if (eq $type "LoadBalancer") }}
-  clusterIP: {{ default nil .clusterIP | quote }}
-  loadBalancerIP: {{ default nil .loadBalancerIP | quote }}
+  {{- if .clusterIP }}
+  clusterIP: {{ .clusterIP | quote }}
+  {{- end }}
+
+  {{- if .loadBalancerIP }}
+  loadBalancerIP: {{ .loadBalancerIP | quote }}
+  {{- end }}
   externalTrafficPolicy: {{ .externalTrafficPolicy | default "Cluster" | quote }}
 
   {{- with .loadBalancerSourceRanges }}
@@ -57,7 +66,9 @@ spec:
   {{- end }}
 
   {{- if (.externalTrafficPolicy) and (eq .externalTrafficPolicy "Local") }}
-  healthCheckNodePort: {{ default nil .healthCheckNodePort | quote }}
+  {{- if .healthCheckNodePort }}
+  healthCheckNodePort: {{ .healthCheckNodePort | quote }}
+  {{- end }}
   {{- end }}
 
   {{- end }}

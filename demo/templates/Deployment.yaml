@@ -24,10 +24,19 @@ metadata:
 
 spec:
   replicas: {{ required "No. of replicas are required" .replicas }}
-  minReadySeconds: {{ default nil .minReadySeconds | quote }}
-  progressDeadlineSeconds: {{ default nil .progressDeadlineSeconds | quote }}
-  paused: {{ default nil .paused | quote }}
   revisionHistoryLimit: {{ default 10 .revisionHistoryLimit }}
+
+  {{- if .minReadySeconds }}
+  minReadySeconds: {{ .minReadySeconds | quote }}
+  {{- end }}
+
+  {{- if .progressDeadlineSeconds }}
+  progressDeadlineSeconds: {{ .progressDeadlineSeconds | quote }}
+  {{- end }}
+
+  {{- if .paused }}
+  paused: {{ .paused | quote }}
+  {{- end }}
   
   {{- with .strategy }}
   strategy:

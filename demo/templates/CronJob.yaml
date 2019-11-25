@@ -27,7 +27,10 @@ spec:
   failedJobsHistoryLimit: {{ default 1 .failedJobsHistoryLimit }}
   successfulJobsHistoryLimit: {{ default 3 .successfulJobsHistoryLimit }}
   suspend: {{ default false .suspend }}
-  startingDeadlineSeconds: {{ default nil .startingDeadlineSeconds | quote }}
+
+  {{- if .startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ .startingDeadlineSeconds | quote }}
+  {{- end }}
 
   {{- with .jobTemplate }}
   jobTemplate:
@@ -40,10 +43,22 @@ spec:
     
     spec:
       backoffLimit: {{ default 6 .backoffLimit }}
-      activeDeadlineSeconds: {{ default nil .activeDeadlineSeconds | quote }}
-      completions: {{ default nil .completions | quote }}
-      manualSelector: {{ default nil .manualSelector | quote }}
-      parallelism: {{ default nil .parallelism | quote }}
+
+      {{- if .activeDeadlineSeconds }}
+      activeDeadlineSeconds: {{ .activeDeadlineSeconds | quote }}
+      {{- end }}
+
+      {{- if .completions }}
+      completions: {{ .completions | quote }}
+      {{- end }}
+
+      {{- if .manualSelector }}
+      manualSelector: {{ .manualSelector | quote }}
+      {{- end }}
+
+      {{- if .parallelism }}
+      parallelism: {{ .parallelism | quote }}
+      {{- end }}
 
       {{- with .template }}
       template:

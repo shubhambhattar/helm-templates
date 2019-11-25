@@ -7,15 +7,42 @@ hostNetwork: {{ default false .hostNetwork }}
 hostPID: {{ default false .hostPID }}
 restartPolicy: {{ .restartPolicy | default "Always" | quote }}
 shareProcessNamespace: {{ default false .shareProcessNamespace }}
-activeDeadlineSeconds: {{ default nil .activeDeadlineSeconds | quote }}
-subdomain: {{ default nil .subdomain | quote }}
-schedulerName: {{ default nil .schedulerName | quote }}
-hostname: {{ default nil .hostname | quote }}
-nodeName: {{ default nil .nodeName | quote }}
-serviceAccountName: {{ default nil .serviceAccountName | quote }}
-automountServiceAccountToken: {{ default nil .automountServiceAccountToken | quote }}
-priority: {{ default nil .priority | quote }}
-priorityClassName: {{ default nil .priorityClassName | quote }}
+
+{{- if .activeDeadlineSeconds }}
+activeDeadlineSeconds: {{ .activeDeadlineSeconds | quote }}
+{{- end }}
+
+{{- if .subdomain }}
+subdomain: {{ .subdomain | quote }}
+{{- end }}
+
+{{- if .schedulerName }}
+schedulerName: {{ .schedulerName | quote }}
+{{- end }}
+
+{{- if .hostname }}
+hostname: {{ .hostname | quote }}
+{{- end }}
+
+{{- if .nodeName }}
+nodeName: {{ .nodeName | quote }}
+{{- end }}
+
+{{- if .serviceAccountName }}
+serviceAccountName: {{ .serviceAccountName | quote }}
+{{- end }}
+
+{{- if .automountServiceAccountToken }}
+automountServiceAccountToken: {{ .automountServiceAccountToken | quote }}
+{{- end }}
+
+{{- if .priority }}
+priority: {{ .priority | quote }}
+{{- end }}
+
+{{- if .priorityClassName }}
+priorityClassName: {{ .priorityClassName | quote }}
+{{- end }}
 
 {{- with .nodeSelector }}
 nodeSelector:

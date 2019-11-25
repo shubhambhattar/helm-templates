@@ -1,8 +1,15 @@
 {{/* General PersistentVolumeClaim Spec Template */}}
 {{- define "persistentVolumeClaimSpec" -}}
 storageClassName: {{ default nil .storageClassName | quote }}
-volumeName: {{ default nil .volumeName | quote }}
-volumeMode: {{ default nil .volumeMode | quote }}
+
+{{- if .volumeName }}
+volumeName: {{ .volumeName | quote }}
+{{- end }}
+
+{{- if .volumeMode }}
+volumeMode: {{ .volumeMode | quote }}
+{{- end }}
+
 resources:
   requests:
     storage: {{ required "Storage size is required" .resources.requests.storage }}
